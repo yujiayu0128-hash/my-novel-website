@@ -482,7 +482,7 @@ function parseChapters(content) {
     // 其他小说的通用识别
     const chapterPatterns = [
         /^第[一二三四五六七八九十\d]+章/g,      // 第一章、第1章
-        /^Chapter\s*\d+/gi,                     // Chapter 1
+        /^Chapter\s*\d+/gi,                     // Chapter 1 ✅ 已经有了
         /^第[一二三四五六七八九十\d]+节/g,      // 第一节、第1节
         /^Part\s*\d+/gi,                        // Part 1
         /^第[一二三四五六七八九十\d]+卷/gm      // 第一卷
