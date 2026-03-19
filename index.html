@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的私人图书馆</title>
+    <title>小说</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <!-- 头部 -->
         <header>
-            <h1>📚 我的私人图书馆</h1>
+            <h1>小说</h1>
             <p>共 <span id="bookCount">0</span> 本小说</p>
         </header>
         
@@ -26,11 +26,7 @@
         </div>
         
         <!-- 排序选项 -->
-        <div class="sort-bar">
-            <span>排序：</span>
-            <button class="sort-btn active" onclick="sortBooks('a-z')">A → Z</button>
-            <button class="sort-btn" onclick="sortBooks('z-a')">Z → A</button>
-        </div>
+        <!-- 排序功能已移除，默认A-Z排序 -->
         
         <!-- 小说列表 -->
         <div class="book-list" id="bookList">

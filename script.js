@@ -1,10 +1,35 @@
 // 存储所有小说的信息
 let books = [];
-let currentSort = 'a-z';  // 当前排序方式
 
-// 页面加载时，读取novels文件夹里的所有小说
+// 页面加载时，读取小说列表和上次的状态
 window.onload = function() {
     loadBooks();
+    
+    // 恢复上次的搜索词（等小说列表加载完）
+    setTimeout(() => {
+        const lastSearch = localStorage.getItem('lastSearch');
+        if (lastSearch) {
+            document.getElementById('searchInput').value = lastSearch;
+            searchBooks(); // 触发搜索
+        }
+        
+        // 恢复上次的滚动位置
+        const lastScroll = localStorage.getItem('lastScroll');
+        if (lastScroll) {
+            window.scrollTo(0, parseInt(lastScroll));
+        }
+    }, 200); // 给 loadBooks 一点时间
+};
+
+// 滚动时保存位置（用防抖）
+let scrollTimer;
+window.onscroll = function() {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+        const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+        localStorage.setItem('lastScroll', scrollPos);
+        console.log('保存滚动位置:', scrollPos); // 可以看有没有保存成功
+    }, 200);
 };
 
 // 加载小说列表
@@ -12,20 +37,57 @@ async function loadBooks() {
     const bookList = document.getElementById('bookList');
     
     try {
-        // 这里我们用模拟数据，因为纯前端不能直接读取文件夹
-        // 在实际部署时，需要后端支持。现在先手动添加你的小说
-        
-        // 手动输入你的小说列表（改成你实际的文件名）
+        // 你的小说列表
         const mockBooks = [
-            { name: '三体.txt', size: '2.3 MB' },
-            { name: '平凡的世界.txt', size: '1.8 MB' },
-            { name: '百年孤独.txt', size: '1.5 MB' },
-            { name: '活着.txt', size: '1.2 MB' },
-            { name: '追风筝的人.txt', size: '1.4 MB' },
-            { name: '解忧杂货店.txt', size: '1.1 MB' }
-        ];
+    { name: '25小时（打字机）.txt' },
+    { name: '两A相逢必有一O（厉冬忍）.txt' },
+    { name: '二哈和他的白猫师尊 （肉包不吃肉）.txt' },
+    { name: '养狼为患（青端）.txt' },
+    { name: '判官（木苏里）.txt' },
+    { name: '南方海啸（卡比丘）.txt' },
+    { name: '同学婚约（几京）.txt' },
+    { name: '和沈先生协议结婚后（公子如兰）.txt' },
+    { name: '好运时间（卡比丘）.txt' },
+    { name: '将进酒 (唐酒卿）.txt' },
+    { name: '小潭山没有天文台 (清明谷雨) .txt' },
+    { name: '山海之间（木小吉）.txt' },
+    { name: '悬日（稚楚）.txt' },
+    { name: '我亲爱的法医小姐（酒暖春深）.txt' },
+    { name: '我只喜欢你的人设（稚楚) .txt' },
+    { name: '我和对象比命长（云霄YX）.txt' },
+    { name: '我在惊悚游戏里封神（壶鱼辣椒）.txt' },
+    { name: '我行让我上（酱子贝）.txt' },
+    { name: '提灯映桃花（淮上）.txt' },
+    { name: '旅鸟（山颂）.txt' },
+    { name: '日出风来（春日夏禾）.txt' },
+    { name: '星垂平野（木小吉）.txt' },
+    { name: '春日出逃手札（故栀）.txt' },
+    { name: '暖味备份（尤里麦）.txt' },
+    { name: '木偶综合症（青石018）.txt' },
+    { name: '沙雕学霸系统（小青）.txt' },
+    { name: '泗天（淮上）.txt' },
+    { name: '漂亮beta和顶A假婚真爱了（山木晏）.txt' },
+    { name: '热带公路（子律）.txt' },
+    { name: '百万UP学神天天演我（小霄）.txt' },
+    { name: '皇恩浩荡（白芥子）.txt' },
+    { name: '穿成高危职业之师尊（一丛音）.txt' },
+    { name: '等你落地我们再谈（思谦冲）.txt' },
+    { name: '美学公式（空菊）.txt' },
+    { name: '脱缰（梅子瞎了）.txt' },
+    { name: '荒谬之敌（星坠）.txt' },
+    { name: '荒野植被（麦香鸡呢）.txt' },
+    { name: '蝶变（麟潜）.txt' },
+    { name: '装傻后我坑了渣攻（板栗丸子）.txt' },
+    { name: '贵族男校（郑九煞NP）.txt' },
+    { name: '越界（几京）.txt' },
+    { name: '逐云墓场（今天全没月光）.txt' },
+    { name: '陈年烈苟（不问三九）.txt' },
+    { name: '靡言（回南雀）.txt' }
+];
         
         books = mockBooks;
+        // 默认按文件名A-Z排序
+        books.sort((a, b) => a.name.localeCompare(b.name));
         document.getElementById('bookCount').textContent = books.length;
         displayBooks(books);
         
@@ -51,14 +113,9 @@ function displayBooks(booksToShow) {
         html += `
             <div class="book-item">
                 <div class="book-info">
-                    <span class="book-icon">📘</span>
-                    <div class="book-details">
-                        <div class="book-name">${displayName}</div>
-                        <div class="book-meta">
-                            <span>📄 TXT文件</span>
-                            <span>${book.size || '大小未知'}</span>
-                        </div>
-                    </div>
+                    <span class="book-icon">📄</span>
+                    <span class="book-name">${displayName}</span>
+                    <span class="book-meta">TXT</span>
                 </div>
                 <div class="book-actions">
                     <button class="action-btn read-btn" onclick="readBook('${book.name}')">阅读</button>
@@ -75,8 +132,10 @@ function displayBooks(booksToShow) {
 function searchBooks() {
     const searchText = document.getElementById('searchInput').value.toLowerCase();
     
+    // 保存搜索词
+    localStorage.setItem('lastSearch', searchText);
+    
     if (!searchText) {
-        // 如果搜索框为空，显示所有书
         displayBooks(books);
         return;
     }
@@ -88,42 +147,34 @@ function searchBooks() {
     displayBooks(filtered);
 }
 
-// 排序功能
-function sortBooks(type) {
-    currentSort = type;
-    
-    // 更新按钮样式
-    document.querySelectorAll('.sort-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    event.target.classList.add('active');
-    
-    // 复制数组并排序
-    const sorted = [...books];
-    sorted.sort((a, b) => {
-        if (type === 'a-z') {
-            return a.name.localeCompare(b.name);
-        } else {
-            return b.name.localeCompare(a.name);
-        }
-    });
-    
-    displayBooks(sorted);
-}
-
 // 阅读功能（跳转到阅读页）
 function readBook(fileName) {
+    // 保存当前的搜索词和滚动位置
+    const searchText = document.getElementById('searchInput').value;
+    const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+    
+    localStorage.setItem('lastSearch', searchText);
+    localStorage.setItem('lastScroll', scrollPos);
+    
+    console.log('离开时保存 - 搜索:', searchText, '滚动:', scrollPos); // 调试用
+    
     // 把文件名传给阅读页
     window.location.href = `reader.html?file=${encodeURIComponent(fileName)}`;
 }
 
 // 下载功能
 function downloadBook(fileName) {
-    // 创建一个隐藏的a标签触发下载
-    const link = document.createElement('a');
-    link.href = `novels/${fileName}`;  // 指向novels文件夹里的文件
-    link.download = fileName;           // 指定下载文件名
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+        // 创建一个隐藏的a标签触发下载
+        const link = document.createElement('a');
+        link.href = `novels/小说/${fileName}`;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        console.log('下载成功:', fileName);
+    } catch (error) {
+        console.error('下载失败:', error);
+        alert('下载失败，请检查文件是否存在');
+    }
 }
