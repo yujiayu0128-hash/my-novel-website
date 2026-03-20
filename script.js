@@ -80,7 +80,7 @@ async function loadBooks() {
             { name: '逐云墓场（今天全没月光）.txt' },
             { name: '陈年烈苟（不问三九）.txt' },
             { name: '靡言（回南雀）.txt' },
-            { name: '残次品（prist）.txt' }
+            { name: '残次品（prist）.txt' },
         ];
         
         books = mockBooks;
