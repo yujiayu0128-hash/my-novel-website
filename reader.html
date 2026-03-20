@@ -5,13 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>阅读小说</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background: #fefcf5;
             padding: 20px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-        .reader-container { max-width: 800px; margin: 0 auto; }
+
+        .reader-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        /* 左侧目录 */
+        .chapter-list {
+            width: 260px;
+            background: #f8f5ff;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e0d5f5;
+            position: sticky;
+            top: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .chapter-list h3 {
+            margin: 0 0 12px 0;
+            font-size: 1rem;
+            color: #4a4458;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0d5f5;
+        }
+
+        .chapter-item {
+            padding: 8px 12px;
+            margin: 4px 0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid #e0d5f5;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: all 0.2s;
+        }
+
+        .chapter-item:hover {
+            background: #e5d9ff;
+            border-color: #9b7bff;
+        }
+
+        .chapter-item.active {
+            background: #9b7bff;
+            color: white;
+            border-color: #9b7bff;
+        }
+
+        /* 右侧正文 */
+        .reader-content {
+            flex: 1;
+            line-height: 1.8;
+            font-size: 1rem;
+            color: #333;
+            white-space: pre-wrap;
+            padding: 20px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #eee;
+            min-height: 500px;
+        }
+
         .reader-header {
             display: flex;
             align-items: center;
@@ -20,119 +93,147 @@
             padding-bottom: 15px;
             border-bottom: 1px solid #ddd;
         }
+
         .back-btn {
             padding: 6px 16px;
             background: #eee;
             border: none;
             border-radius: 20px;
             cursor: pointer;
+            font-size: 0.9rem;
         }
-        .reader-title { font-size: 1.5rem; font-weight: 500; color: #333; }
-        .reader-content {
-            line-height: 1.8;
-            font-size: 1rem;
+
+        .reader-title {
+            font-size: 1.5rem;
+            font-weight: 500;
             color: #333;
-            white-space: pre-wrap;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #eee;
-            min-height: 500px;
         }
-        .loading, .error { text-align: center; padding: 60px; color: #999; }
-        .chapter-nav {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
+
+        .loading, .error {
+            text-align: center;
+            padding: 60px;
+            color: #999;
         }
-        .nav-btn {
-            padding: 8px 24px;
-            background: #eee;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-        }
-        .nav-btn.disabled { opacity: 0.4; pointer-events: none; }
+
         @media (max-width: 700px) {
-            body { padding: 12px; }
-            .reader-title { font-size: 1.2rem; }
-            .reader-content { padding: 15px; }
-            .chapter-nav {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: white;
-                margin: 0;
-                padding: 10px 16px;
-                border-top: 1px solid #ddd;
+            body {
+                padding: 12px;
             }
-            .reader-container { padding-bottom: 70px; }
+            .reader-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .chapter-list {
+                width: 100%;
+                position: static;
+                max-height: 200px;
+            }
+            .reader-title {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="reader-container">
-        <div class="reader-header">
-            <button class="back-btn" onclick="goBack()">← 返回</button>
-            <h1 class="reader-title" id="bookTitle">加载中...</h1>
+        <!-- 左侧目录 -->
+        <div class="chapter-list" id="chapterList">
+            <h3>📑 章节列表</h3>
+            <div id="chapters">加载中...</div>
         </div>
-        <div class="reader-content" id="bookContent"><div class="loading">加载中...</div></div>
-        <div class="chapter-nav">
-            <button class="nav-btn" onclick="prevChapter()" id="prevBtn">← 上一章</button>
-            <button class="nav-btn" onclick="nextChapter()" id="nextBtn">下一章 →</button>
+
+        <!-- 右侧正文 -->
+        <div class="reader-content-area">
+            <div class="reader-header">
+                <button class="back-btn" onclick="goBack()">← 返回</button>
+                <h1 class="reader-title" id="bookTitle">加载中...</h1>
+            </div>
+            <div class="reader-content" id="bookContent">
+                <div class="loading">加载中...</div>
+            </div>
         </div>
     </div>
+
     <script>
-        let chapters = [], fullContent = '', currentIndex = 0;
+        let chapters = [];
+        let fullContent = '';
+        let currentChapterIndex = 0;
+
         const urlParams = new URLSearchParams(window.location.search);
         const fileName = urlParams.get('file');
+
         if (fileName) {
             document.getElementById('bookTitle').textContent = fileName.replace('.txt', '');
             loadBookContent(fileName);
         } else {
             document.getElementById('bookContent').innerHTML = '<div class="error">❌ 没有指定小说</div>';
         }
+
         function loadBookContent(fileName) {
             fetch('novels/小说/' + encodeURIComponent(fileName))
-                .then(r => { if (!r.ok) throw new Error('文件不存在'); return r.text(); })
+                .then(r => {
+                    if (!r.ok) throw new Error('文件不存在');
+                    return r.text();
+                })
                 .then(content => {
                     fullContent = content;
                     parseChapters(content);
-                    if (chapters.length > 0) showChapter(0);
-                    else {
+                    if (chapters.length > 0) {
+                        showChapter(0);
+                    } else {
                         document.getElementById('bookContent').innerHTML = content.replace(/\n/g, '<br>');
-                        document.getElementById('prevBtn').classList.add('disabled');
-                        document.getElementById('nextBtn').classList.add('disabled');
+                        document.getElementById('chapters').innerHTML = '<div style="color:#999">无章节标记</div>';
                     }
                 })
-                .catch(() => { document.getElementById('bookContent').innerHTML = '<div class="error">❌ 读取失败</div>'; });
+                .catch(() => {
+                    document.getElementById('bookContent').innerHTML = '<div class="error">❌ 读取失败</div>';
+                });
         }
+
         function parseChapters(content) {
             let lines = content.split('\n');
             chapters = [];
             let chapterPattern = /^第[一二三四五六七八九十\d]+章|^Chapter\s*\d+/i;
+
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i].trim();
-                if (chapterPattern.test(line)) chapters.push({ title: line, startLine: i });
+                if (chapterPattern.test(line)) {
+                    chapters.push({
+                        title: line,
+                        startLine: i
+                    });
+                }
             }
-            if (chapters.length === 0) chapters = [{ title: '全文', startLine: 0 }];
+
+            if (chapters.length === 0) {
+                chapters = [{ title: '全文', startLine: 0 }];
+            }
+
+            // 渲染目录
+            let html = '';
+            chapters.forEach((c, i) => {
+                html += `<div class="chapter-item" onclick="showChapter(${i})">${c.title}</div>`;
+            });
+            document.getElementById('chapters').innerHTML = html;
         }
+
         function showChapter(index) {
-            currentIndex = index;
+            currentChapterIndex = index;
             let start = chapters[index].startLine;
             let end = (index + 1 < chapters.length) ? chapters[index + 1].startLine : fullContent.split('\n').length;
             let lines = fullContent.split('\n').slice(start, end);
             document.getElementById('bookContent').innerHTML = lines.join('\n').replace(/\n/g, '<br>');
-            let prev = document.getElementById('prevBtn'), next = document.getElementById('nextBtn');
-            if (index === 0) prev.classList.add('disabled'); else prev.classList.remove('disabled');
-            if (index === chapters.length - 1) next.classList.add('disabled'); else next.classList.remove('disabled');
+
+            // 高亮当前章节
+            document.querySelectorAll('.chapter-item').forEach((el, i) => {
+                if (i === index) el.classList.add('active');
+                else el.classList.remove('active');
+            });
         }
-        function prevChapter() { if (currentIndex > 0) showChapter(currentIndex - 1); }
-        function nextChapter() { if (currentIndex < chapters.length - 1) showChapter(currentIndex + 1); }
-        function goBack() { window.location.href = 'index.html'; }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>
