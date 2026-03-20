@@ -3,18 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小说</title>
+    <title>阅读小说</title>
     <link rel="stylesheet" href="style.css">
     <style>
-    .reader-container {
-        max-width: 1000px;
-        margin: 40px auto;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
         background: #fefcf5;
-        border-radius: 32px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        padding: 30px;
+        padding: 2rem;
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .reader-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #fefcf5;
         position: relative;
     }
+
     .reader-header {
         display: flex;
         align-items: center;
@@ -23,6 +33,7 @@
         padding-bottom: 20px;
         border-bottom: 2px solid #f0eaff;
     }
+
     .back-btn {
         padding: 8px 20px;
         background: #f0eaff;
@@ -33,20 +44,21 @@
         font-size: 1rem;
         transition: all 0.2s;
     }
+
     .back-btn:hover {
         background: #e5d9ff;
     }
+
     .reader-title {
         font-size: 1.8rem;
         color: #2d2a3a;
         margin: 0;
     }
-    
-    /* 右侧历史图标 */
+
     .history-icon {
         position: absolute;
-        top: 30px;
-        right: 30px;
+        top: 0;
+        right: 0;
         width: 40px;
         height: 40px;
         background: #f0eaff;
@@ -60,16 +72,16 @@
         border: 1px solid #e0d5f5;
         z-index: 100;
     }
+
     .history-icon:hover {
         background: #e5d9ff;
         transform: scale(1.1);
     }
-    
-    /* 历史记录弹窗 */
+
     .history-popup {
         position: absolute;
-        top: 80px;
-        right: 30px;
+        top: 50px;
+        right: 0;
         width: 300px;
         background: white;
         border-radius: 16px;
@@ -81,9 +93,11 @@
         max-height: 400px;
         overflow-y: auto;
     }
+
     .history-popup.show {
         display: block;
     }
+
     .history-popup h3 {
         margin: 0 0 12px 0;
         color: #333;
@@ -92,6 +106,7 @@
         padding-bottom: 8px;
         border-bottom: 1px solid #f0eaff;
     }
+
     .history-item {
         padding: 10px;
         border-bottom: 1px solid #f5f5f5;
@@ -100,18 +115,22 @@
         cursor: pointer;
         transition: background 0.2s;
     }
+
     .history-item:hover {
         background: #f8f5ff;
     }
+
     .history-item .chapter {
         font-weight: 500;
         color: #333;
         margin-bottom: 4px;
     }
+
     .history-item .date {
         font-size: 0.8rem;
         color: #999;
     }
+
     .history-item .preview {
         font-size: 0.85rem;
         color: #666;
@@ -120,26 +139,31 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
     .no-history {
         text-align: center;
         padding: 20px;
         color: #999;
         font-size: 0.9rem;
     }
-    
+
     .chapter-panel {
         display: flex;
-        gap: 20px;
-        height: 70vh;
+        gap: 30px;
+        min-height: 600px;
+        margin-bottom: 40px;
     }
+
     .chapter-list {
-        width: 250px;
+        width: 280px;
         background: #f8f5ff;
         border-radius: 20px;
-        padding: 15px;
+        padding: 20px;
         overflow-y: auto;
         border: 1px solid #e0d5f5;
+        max-height: 70vh;
     }
+
     .chapter-list h3 {
         margin: 0 0 15px 0;
         color: #4a4458;
@@ -147,6 +171,7 @@
         padding-bottom: 10px;
         border-bottom: 2px solid #e0d5f5;
     }
+
     .chapter-item {
         padding: 10px 15px;
         margin: 5px 0;
@@ -160,15 +185,18 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
     .chapter-item:hover {
         background: #e5d9ff;
         border-color: #9b7bff;
     }
+
     .chapter-item.active {
         background: #9b7bff;
         color: white;
         border-color: #9b7bff;
     }
+
     .reader-content {
         flex: 1;
         line-height: 1.8;
@@ -177,144 +205,48 @@
         white-space: pre-wrap;
         font-family: 'Georgia', serif;
         overflow-y: auto;
-        padding: 20px;
+        padding: 25px;
         background: white;
         border-radius: 20px;
         border: 1px solid #f0eaff;
+        max-height: 70vh;
     }
+
     .loading {
         text-align: center;
         padding: 100px;
         color: #7a739b;
         font-size: 1.2rem;
     }
+
     .error {
         text-align: center;
         padding: 100px;
         color: #ff6b6b;
         font-size: 1.2rem;
     }
-    
-    @media (max-width: 768px) {
-    .chapter-panel {
-        flex-direction: row;  /* 改成左右排列，不换行 */
-        height: 100vh;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        margin: 0;
-        padding: 0;
-        background: #fefcf5;
-        z-index: 10;
-    }
-    
-    .chapter-list {
-        width: 200px;
-        height: 100vh;
-        max-height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 20;
-        border-radius: 0;
-        background: #f8f5ff;
-        overflow-y: auto;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        transform: translateX(-100%);  /* 默认隐藏 */
-        transition: transform 0.3s ease;
-    }
-    
-    .chapter-list.show {
-        transform: translateX(0);  /* 显示目录 */
-    }
-    
-    /* 添加目录开关按钮 */
-    .menu-toggle {
-        position: fixed;
-        left: 10px;
-        top: 10px;
-        width: 40px;
-        height: 40px;
-        background: #9b7bff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.5rem;
-        z-index: 30;
-        cursor: pointer;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
-    
-    .reader-header {
-        padding: 15px;
-        margin: 0;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: #fefcf5;
-        z-index: 15;
-        border-bottom: 2px solid #f0eaff;
-        height: 60px;  /* 固定标题栏高度 */
-    }
-    
-    .reader-header {
-        padding: 15px;
-        margin: 0;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: #fefcf5;
-        z-index: 15;
-        border-bottom: 2px solid #f0eaff;
-    }
-    
-    .reader-header .back-btn {
-        margin-left: 50px;  /* 给菜单按钮让位 */
-    }
-    
-    .reader-title {
-        font-size: 1.2rem;
-    }
-    
-    .reader-content {
-        margin-left: 0;
-        width: 100%;
-        height: calc(100vh - 110px);  /* 减去标题栏(60px) + 底部导航(50px) */
-        border-radius: 0;
-        padding: 20px;
-        margin-top: 60px;  /* 给标题栏留空间 */
-        margin-bottom: 50px;  /* 给底部导航留空间 */
-        overflow-y: auto;
-    }
-    
-    /* 底部导航按钮 */
+
     .chapter-nav {
-        margin-top: 30px;
-        padding: 20px 0;
+        margin-top: 20px;
+        padding: 20px 0 0 0;
         border-top: 1px solid #f0eaff;
         display: flex;
         justify-content: space-between;
         align-items: center;
         background: white;
+        max-width: 100%;
     }
 
     .nav-btn {
-        padding: 10px 24px;
+        padding: 12px 32px;
         background: #f0eaff;
         border: none;
-        border-radius: 30px;
+        border-radius: 40px;
         color: #4a4458;
         cursor: pointer;
         font-size: 1rem;
         transition: all 0.2s;
-        min-width: 100px;
+        min-width: 120px;
     }
 
     .nav-btn:hover {
@@ -326,22 +258,69 @@
         pointer-events: none;
     }
 
-#chapterInfo {
-    color: #666;
-    font-size: 0.95rem;
-}
-}
+    #chapterInfo {
+        color: #666;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding: 1rem;
+        }
+
+        .chapter-panel {
+            flex-direction: column;
+            gap: 15px;
+            min-height: auto;
+            margin-bottom: 80px;
+        }
+
+        .chapter-list {
+            width: 100%;
+            max-height: 200px;
+        }
+
+        .reader-header {
+            flex-wrap: wrap;
+        }
+
+        .reader-content {
+            max-height: 60vh;
+        }
+
+        .chapter-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background: white;
+            border-top: 1px solid #f0eaff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 15;
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .chapter-nav .nav-btn {
+            padding: 8px 20px;
+            min-width: 90px;
+        }
+
+        .reader-container {
+            padding-bottom: 20px;
+        }
+    }
 </style>
 </head>
 <body>
     <div class="reader-container">
-        <!-- 手机版目录开关 -->
-        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-
-        <!-- 右侧历史图标 -->
         <div class="history-icon" id="historyIcon" onclick="toggleHistory()">⏳</div>
-    
-        <!-- 历史记录弹窗 -->
+
         <div class="history-popup" id="historyPopup">
             <h3>阅读历史</h3>
             <div id="historyList">
@@ -353,41 +332,33 @@
             <button class="back-btn" onclick="goBack()">← 返回主页</button>
             <h1 class="reader-title" id="bookTitle">加载中...</h1>
         </div>
-        
+
         <div class="chapter-panel">
-            
-            <!-- 左侧章节列表 -->
             <div class="chapter-list" id="chapterList">
                 <h3>章节列表</h3>
                 <div id="chapters">加载章节中...</div>
             </div>
-            
-            <!-- 右侧正文 -->
+
             <div class="reader-content" id="bookContent">
                 <div class="loading">正在加载小说内容...</div>
             </div>
+        </div>
 
-            <!-- 底部章节导航 -->
-            <div class="chapter-nav">
-                <button class="nav-btn" onclick="prevChapter()" id="prevBtn">← 上一章</button>
-                <span id="chapterInfo">1/66</span>
-                <button class="nav-btn" onclick="nextChapter()" id="nextBtn">下一章 →</button>
-            </div>
+        <div class="chapter-nav">
+            <button class="nav-btn" onclick="prevChapter()" id="prevBtn">← 上一章</button>
+            <span id="chapterInfo">1/66</span>
+            <button class="nav-btn" onclick="nextChapter()" id="nextBtn">下一章 →</button>
         </div>
     </div>
-    
+
     <script>
-        // 存储章节信息
         let chapters = [];
         let fullContent = '';
-        
-        // 存储阅读历史
         let readingHistory = [];
         let currentChapter = '';
         let currentLine = 0;
         let currentBook = '';
         
-        // 获取URL参数中的文件名
         const urlParams = new URLSearchParams(window.location.search);
         const fileName = urlParams.get('file');
         
@@ -424,7 +395,6 @@
                 });
         }
         
-        // 加载阅读历史
         function loadHistory() {
             const historyStr = localStorage.getItem('readingHistory_' + currentBook);
             if (historyStr) {
@@ -435,7 +405,6 @@
             renderHistory();
         }
         
-        // 保存当前阅读位置（精确到段落）
         function saveReadingPosition() {
             if (!currentBook || !currentChapter) return;
             
@@ -482,14 +451,13 @@
             }
             
             if (readingHistory.length > 100) {
-                readingHistory = readingHistory.slice(0, 10);
+                readingHistory = readingHistory.slice(0, 100);
             }
             
             localStorage.setItem('readingHistory_' + currentBook, JSON.stringify(readingHistory));
             renderHistory();
         }
         
-        // 渲染历史记录
         function renderHistory() {
             const historyList = document.getElementById('historyList');
             
@@ -512,7 +480,6 @@
             historyList.innerHTML = html;
         }
         
-        // 跳转到历史记录的位置
         function jumpToHistory(index) {
             const record = readingHistory[index];
             if (!record) return;
@@ -544,12 +511,10 @@
             document.getElementById('historyPopup').classList.remove('show');
         }
         
-        // 切换历史弹窗显示
         function toggleHistory() {
             document.getElementById('historyPopup').classList.toggle('show');
         }
         
-        // 点击其他地方关闭弹窗
         document.addEventListener('click', function(event) {
             const icon = document.getElementById('historyIcon');
             const popup = document.getElementById('historyPopup');
@@ -558,123 +523,110 @@
             }
         });
         
-// 识别章节
-function parseChapters(content) {
-    // 获取当前小说名字
-    const currentBook = document.getElementById('bookTitle').textContent;
-    
-    // 特殊处理：《悬日》按 P 和 N 分章
-    if (currentBook.includes('悬日')) {
-        const lines = content.split('\n');
-        chapters = [];
-        let introLines = [];
-        let foundFirstChapter = false;
-        
-        lines.forEach((line, index) => {
-            const trimmedLine = line.trim();
-            if (trimmedLine === '') return;
+        function parseChapters(content) {
+            const currentBook = document.getElementById('bookTitle').textContent;
             
-            // 匹配 P 或 N 开头的章节（后面跟点号或空格或直接跟文字）
-            if (trimmedLine.match(/^[PN][.\s]?/)) {
-                // 找到第一个章节时，把前面的内容作为简介
-                if (!foundFirstChapter && index > 0) {
-                    // 收集简介内容（跳过空行）
-                    for (let i = 0; i < index; i++) {
-                        if (lines[i].trim() !== '') {
-                            introLines.push(lines[i]);
+            if (currentBook.includes('悬日')) {
+                const lines = content.split('\n');
+                chapters = [];
+                let introLines = [];
+                let foundFirstChapter = false;
+                
+                lines.forEach((line, index) => {
+                    const trimmedLine = line.trim();
+                    if (trimmedLine === '') return;
+                    
+                    if (trimmedLine.match(/^[PN][.\s]?/)) {
+                        if (!foundFirstChapter && index > 0) {
+                            for (let i = 0; i < index; i++) {
+                                if (lines[i].trim() !== '') {
+                                    introLines.push(lines[i]);
+                                }
+                            }
+                            if (introLines.length > 0) {
+                                chapters.push({
+                                    title: '简介',
+                                    lineNumber: 0,
+                                    isIntro: true
+                                });
+                            }
+                            foundFirstChapter = true;
                         }
-                    }
-                    if (introLines.length > 0) {
                         chapters.push({
-                            title: '简介',
-                            lineNumber: 0,
-                            isIntro: true
+                            title: trimmedLine,
+                            lineNumber: index
                         });
                     }
-                    foundFirstChapter = true;
-                }
-                
-                chapters.push({
-                    title: trimmedLine,
-                    lineNumber: index
                 });
-            }
-        });
-        
-        // 如果没有识别到章节，显示全文
-        if (chapters.length === 0) {
-            chapters.push({
-                title: '全文',
-                lineNumber: 0
-            });
-        }
-        
-        renderChapterList();
-        return;
-    }
-    
-    // 其他小说的通用识别
-    const chapterPatterns = [
-        /^第[一二三四五六七八九十\d]+章/g,      // 第一章、第1章
-        /^Chapter\s*\d+/gi,                     // Chapter 1 ✅ 已经有了
-        /^第[一二三四五六七八九十\d]+节/g,      // 第一节、第1节
-        /^Part\s*\d+/gi,                        // Part 1
-        /^第[一二三四五六七八九十\d]+卷/gm      // 第一卷
-    ];
-    
-    const lines = content.split('\n');
-    chapters = [];
-    let foundFirstChapter = false;
-    let introLines = [];
-    
-    lines.forEach((line, index) => {
-        const trimmedLine = line.trim();
-        if (trimmedLine === '') return;
-        
-        let isChapterTitle = false;
-        for (let pattern of chapterPatterns) {
-            pattern.lastIndex = 0;
-            if (pattern.test(trimmedLine)) {
-                isChapterTitle = true;
-                break;
-            }
-        }
-        
-        if (isChapterTitle && trimmedLine.length < 30) {
-            if (!foundFirstChapter && index > 0) {
-                for (let i = 0; i < index; i++) {
-                    if (lines[i].trim() !== '') {
-                        introLines.push(lines[i]);
-                    }
-                }
-                if (introLines.length > 0) {
+                
+                if (chapters.length === 0) {
                     chapters.push({
-                        title: '简介',
-                        lineNumber: 0,
-                        isIntro: true
+                        title: '全文',
+                        lineNumber: 0
                     });
                 }
-                foundFirstChapter = true;
+                renderChapterList();
+                return;
             }
             
-            chapters.push({
-                title: trimmedLine,
-                lineNumber: index
+            const chapterPatterns = [
+                /^第[一二三四五六七八九十\d]+章/g,
+                /^Chapter\s*\d+/gi,
+                /^第[一二三四五六七八九十\d]+节/g,
+                /^Part\s*\d+/gi,
+                /^第[一二三四五六七八九十\d]+卷/gm
+            ];
+            
+            const lines = content.split('\n');
+            chapters = [];
+            let foundFirstChapter = false;
+            let introLines = [];
+            
+            lines.forEach((line, index) => {
+                const trimmedLine = line.trim();
+                if (trimmedLine === '') return;
+                
+                let isChapterTitle = false;
+                for (let pattern of chapterPatterns) {
+                    pattern.lastIndex = 0;
+                    if (pattern.test(trimmedLine)) {
+                        isChapterTitle = true;
+                        break;
+                    }
+                }
+                
+                if (isChapterTitle && trimmedLine.length < 30) {
+                    if (!foundFirstChapter && index > 0) {
+                        for (let i = 0; i < index; i++) {
+                            if (lines[i].trim() !== '') {
+                                introLines.push(lines[i]);
+                            }
+                        }
+                        if (introLines.length > 0) {
+                            chapters.push({
+                                title: '简介',
+                                lineNumber: 0,
+                                isIntro: true
+                            });
+                        }
+                        foundFirstChapter = true;
+                    }
+                    chapters.push({
+                        title: trimmedLine,
+                        lineNumber: index
+                    });
+                }
             });
+            
+            if (chapters.length === 0) {
+                chapters.push({
+                    title: '全文',
+                    lineNumber: 0
+                });
+            }
+            renderChapterList();
         }
-    });
-    
-    if (chapters.length === 0) {
-        chapters.push({
-            title: '全文',
-            lineNumber: 0
-        });
-    }
-    
-    renderChapterList();
-}
         
-        // 渲染章节列表
         function renderChapterList() {
             const chaptersDiv = document.getElementById('chapters');
             
@@ -691,55 +643,41 @@ function parseChapters(content) {
             chaptersDiv.innerHTML = html;
         }
         
-        // 显示指定章节
-function showChapter(index) {
-    currentChapter = chapters[index].title;
-    currentLine = 0;
-    
-    document.querySelectorAll('.chapter-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    document.querySelectorAll('.chapter-item')[index]?.classList.add('active');
+        function showChapter(index) {
+            currentChapter = chapters[index].title;
+            currentLine = 0;
+            
+            document.querySelectorAll('.chapter-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.chapter-item')[index]?.classList.add('active');
 
-    const lines = fullContent.split('\n');
-    
-    // 如果是简介，从开头到第一章之前
-    if (chapters[index].isIntro) {
-        // 找到第一个真正章节的位置
-        const firstChapterIndex = chapters.findIndex(c => !c.isIntro);
-        if (firstChapterIndex !== -1) {
-            const endLine = chapters[firstChapterIndex].lineNumber;
-            const introLines = lines.slice(0, endLine);
-            const introContent = introLines.join('\n');
-            displayContent(introContent);
-        } else {
-            // 如果没有其他章节，显示全文
-            displayContent(fullContent);
+            const lines = fullContent.split('\n');
+            
+            if (chapters[index].isIntro) {
+                const firstChapterIndex = chapters.findIndex(c => !c.isIntro);
+                if (firstChapterIndex !== -1) {
+                    const endLine = chapters[firstChapterIndex].lineNumber;
+                    const introLines = lines.slice(0, endLine);
+                    const introContent = introLines.join('\n');
+                    displayContent(introContent);
+                } else {
+                    displayContent(fullContent);
+                }
+                saveReadingPosition();
+                updateNavButtons();
+                return;
+            }
+            
+            const startLine = chapters[index].lineNumber;
+            const endLine = (index < chapters.length - 1) ? chapters[index + 1].lineNumber : lines.length;
+            const chapterLines = lines.slice(startLine, endLine);
+            const chapterContent = chapterLines.join('\n');
+            displayContent(chapterContent);
+            saveReadingPosition();
+            updateNavButtons();
         }
-        saveReadingPosition();
-        return;
-    }
-    
-    // 正常章节
-    const startLine = chapters[index].lineNumber;
-    const endLine = (index < chapters.length - 1) ? chapters[index + 1].lineNumber : lines.length;
-
-    const chapterLines = lines.slice(startLine, endLine);
-    const chapterContent = chapterLines.join('\n');
-
-    displayContent(chapterContent);
-    saveReadingPosition();
-
-    // 更新导航按钮
-updateNavButtons();
-
-    // 手机版自动隐藏目录
-    if (window.innerWidth <= 768) {
-        document.querySelector('.chapter-list').classList.remove('show');
-    }
-}
         
-        // 显示内容（格式化）
         function displayContent(content) {
             const formattedContent = content.split('\n').map(paragraph => {
                 if (paragraph.trim() === '') {
@@ -763,57 +701,47 @@ updateNavButtons();
         function goBack() {
             window.location.href = 'index.html';
         }
-
-        // 切换目录显示
-function toggleMenu() {
-    document.querySelector('.chapter-list').classList.toggle('show');
-}
-
-// 上一章
-function prevChapter() {
-    const currentIndex = chapters.findIndex(c => c.title === currentChapter);
-    if (currentIndex > 0) {
-        showChapter(currentIndex - 1);
-        updateNavButtons();
-    }
-}
-
-// 下一章
-function nextChapter() {
-    const currentIndex = chapters.findIndex(c => c.title === currentChapter);
-    if (currentIndex < chapters.length - 1) {
-        showChapter(currentIndex + 1);
-        updateNavButtons();
-    }
-}
-
-// 更新导航按钮状态
-function updateNavButtons() {
-    const currentIndex = chapters.findIndex(c => c.title === currentChapter);
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const chapterInfo = document.getElementById('chapterInfo');
-    
-    if (prevBtn) {
-        if (currentIndex <= 0) {
-            prevBtn.classList.add('disabled');
-        } else {
-            prevBtn.classList.remove('disabled');
+        
+        function prevChapter() {
+            const currentIndex = chapters.findIndex(c => c.title === currentChapter);
+            if (currentIndex > 0) {
+                showChapter(currentIndex - 1);
+            }
         }
-    }
-    
-    if (nextBtn) {
-        if (currentIndex >= chapters.length - 1) {
-            nextBtn.classList.add('disabled');
-        } else {
-            nextBtn.classList.remove('disabled');
+        
+        function nextChapter() {
+            const currentIndex = chapters.findIndex(c => c.title === currentChapter);
+            if (currentIndex < chapters.length - 1) {
+                showChapter(currentIndex + 1);
+            }
         }
-    }
-    
-    if (chapterInfo) {
-        chapterInfo.textContent = `${currentIndex + 1}/${chapters.length}`;
-    }
-}
+        
+        function updateNavButtons() {
+            const currentIndex = chapters.findIndex(c => c.title === currentChapter);
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const chapterInfo = document.getElementById('chapterInfo');
+            
+            if (prevBtn) {
+                if (currentIndex <= 0) {
+                    prevBtn.classList.add('disabled');
+                } else {
+                    prevBtn.classList.remove('disabled');
+                }
+            }
+            
+            if (nextBtn) {
+                if (currentIndex >= chapters.length - 1) {
+                    nextBtn.classList.add('disabled');
+                } else {
+                    nextBtn.classList.remove('disabled');
+                }
+            }
+            
+            if (chapterInfo) {
+                chapterInfo.textContent = `${currentIndex + 1}/${chapters.length}`;
+            }
+        }
     </script>
 </body>
 </html>

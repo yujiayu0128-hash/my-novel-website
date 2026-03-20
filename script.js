@@ -5,12 +5,12 @@ let books = [];
 window.onload = function() {
     loadBooks();
     
-    // 恢复上次的搜索词（等小说列表加载完）
+    // 恢复上次的搜索词
     setTimeout(() => {
         const lastSearch = localStorage.getItem('lastSearch');
         if (lastSearch) {
             document.getElementById('searchInput').value = lastSearch;
-            searchBooks(); // 触发搜索
+            searchBooks();
         }
         
         // 恢复上次的滚动位置
@@ -18,17 +18,16 @@ window.onload = function() {
         if (lastScroll) {
             window.scrollTo(0, parseInt(lastScroll));
         }
-    }, 200); // 给 loadBooks 一点时间
+    }, 200);
 };
 
-// 滚动时保存位置（用防抖）
+// 滚动时保存位置
 let scrollTimer;
 window.onscroll = function() {
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(() => {
         const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
         localStorage.setItem('lastScroll', scrollPos);
-        console.log('保存滚动位置:', scrollPos); // 可以看有没有保存成功
     }, 200);
 };
 
@@ -37,52 +36,51 @@ async function loadBooks() {
     const bookList = document.getElementById('bookList');
     
     try {
-        // 你的小说列表
         const mockBooks = [
-    { name: '25小时（打字机）.txt' },
-    { name: '两A相逢必有一O（厉冬忍）.txt' },
-    { name: '二哈和他的白猫师尊 （肉包不吃肉）.txt' },
-    { name: '养狼为患（青端）.txt' },
-    { name: '判官（木苏里）.txt' },
-    { name: '南方海啸（卡比丘）.txt' },
-    { name: '同学婚约（几京）.txt' },
-    { name: '和沈先生协议结婚后（公子如兰）.txt' },
-    { name: '好运时间（卡比丘）.txt' },
-    { name: '将进酒 (唐酒卿）.txt' },
-    { name: '小潭山没有天文台 (清明谷雨) .txt' },
-    { name: '山海之间（木小吉）.txt' },
-    { name: '悬日（稚楚）.txt' },
-    { name: '我亲爱的法医小姐（酒暖春深）.txt' },
-    { name: '我和对象比命长（云霄YX）.txt' },
-    { name: '我在惊悚游戏里封神（壶鱼辣椒）.txt' },
-    { name: '我行让我上（酱子贝）.txt' },
-    { name: '提灯映桃花（淮上）.txt' },
-    { name: '旅鸟（山颂）.txt' },
-    { name: '日出风来（春日夏禾）.txt' },
-    { name: '星垂平野（木小吉）.txt' },
-    { name: '春日出逃手札（故栀）.txt' },
-    { name: '暧昧备份（尤里麦）.txt' },
-    { name: '木偶综合症（青石018）.txt' },
-    { name: '沙雕学霸系统（小霄）.txt' },
-    { name: '洄天（淮上）.txt' },
-    { name: '漂亮beta和顶A假婚真爱了（山木晏）.txt' },
-    { name: '热带公路（子律）.txt' },
-    { name: '百万UP学神天天演我（小霄）.txt' },
-    { name: '皇恩浩荡（白芥子）.txt' },
-    { name: '穿成高危职业之师尊（一丛音）.txt' },
-    { name: '等你落地我们再谈（思谦冲）.txt' },
-    { name: '美学公式（空菊）.txt' },
-    { name: '脱缰（梅子瞎了）.txt' },
-    { name: '荒谬之敌（星坠）.txt' },
-    { name: '荒野植被（麦香鸡呢）.txt' },
-    { name: '蝶变（麟潜）.txt' },
-    { name: '装傻后我坑了渣攻（板栗丸子）.txt' },
-    { name: '贵族男校 (郑九煞NP) .txt' },
-    { name: '越界（几京）.txt' },
-    { name: '逐云墓场（今天全没月光）.txt' },
-    { name: '陈年烈苟（不问三九）.txt' },
-    { name: '靡言（回南雀）.txt' }
-];
+            { name: '25小时（打字机）.txt' },
+            { name: '两A相逢必有一O（厉冬忍）.txt' },
+            { name: '二哈和他的白猫师尊 （肉包不吃肉）.txt' },
+            { name: '养狼为患（青端）.txt' },
+            { name: '判官（木苏里）.txt' },
+            { name: '南方海啸（卡比丘）.txt' },
+            { name: '同学婚约（几京）.txt' },
+            { name: '和沈先生协议结婚后（公子如兰）.txt' },
+            { name: '好运时间（卡比丘）.txt' },
+            { name: '将进酒 (唐酒卿）.txt' },
+            { name: '小潭山没有天文台 (清明谷雨) .txt' },
+            { name: '山海之间（木小吉）.txt' },
+            { name: '悬日（稚楚）.txt' },
+            { name: '我亲爱的法医小姐（酒暖春深）.txt' },
+            { name: '我和对象比命长（云霄YX）.txt' },
+            { name: '我在惊悚游戏里封神（壶鱼辣椒）.txt' },
+            { name: '我行让我上（酱子贝）.txt' },
+            { name: '提灯映桃花（淮上）.txt' },
+            { name: '旅鸟（山颂）.txt' },
+            { name: '日出风来（春日夏禾）.txt' },
+            { name: '星垂平野（木小吉）.txt' },
+            { name: '春日出逃手札（故栀）.txt' },
+            { name: '暧昧备份（尤里麦）.txt' },
+            { name: '木偶综合症（青石018）.txt' },
+            { name: '沙雕学霸系统（小霄）.txt' },
+            { name: '洄天（淮上）.txt' },
+            { name: '漂亮beta和顶A假婚真爱了（山木晏）.txt' },
+            { name: '热带公路（子律）.txt' },
+            { name: '百万UP学神天天演我（小霄）.txt' },
+            { name: '皇恩浩荡（白芥子）.txt' },
+            { name: '穿成高危职业之师尊（一丛音）.txt' },
+            { name: '等你落地我们再谈（思谦冲）.txt' },
+            { name: '美学公式（空菊）.txt' },
+            { name: '脱缰（梅子瞎了）.txt' },
+            { name: '荒谬之敌（星坠）.txt' },
+            { name: '荒野植被（麦香鸡呢）.txt' },
+            { name: '蝶变（麟潜）.txt' },
+            { name: '装傻后我坑了渣攻（板栗丸子）.txt' },
+            { name: '贵族男校 (郑九煞NP) .txt' },
+            { name: '越界（几京）.txt' },
+            { name: '逐云墓场（今天全没月光）.txt' },
+            { name: '陈年烈苟（不问三九）.txt' },
+            { name: '靡言（回南雀）.txt' }
+        ];
         
         books = mockBooks;
         // 默认按文件名A-Z排序
@@ -106,7 +104,6 @@ function displayBooks(booksToShow) {
     
     let html = '';
     booksToShow.forEach(book => {
-        // 去掉.txt后缀显示
         const displayName = book.name.replace('.txt', '');
         
         html += `
@@ -130,8 +127,6 @@ function displayBooks(booksToShow) {
 // 搜索功能
 function searchBooks() {
     const searchText = document.getElementById('searchInput').value.toLowerCase();
-    
-    // 保存搜索词
     localStorage.setItem('lastSearch', searchText);
     
     if (!searchText) {
@@ -148,32 +143,21 @@ function searchBooks() {
 
 // 阅读功能（跳转到阅读页）
 function readBook(fileName) {
-    // 保存当前的搜索词和滚动位置
     const searchText = document.getElementById('searchInput').value;
     const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
     
     localStorage.setItem('lastSearch', searchText);
     localStorage.setItem('lastScroll', scrollPos);
     
-    console.log('离开时保存 - 搜索:', searchText, '滚动:', scrollPos); // 调试用
-    
-    // 把文件名传给阅读页
     window.location.href = `reader.html?file=${encodeURIComponent(fileName)}`;
 }
 
 // 下载功能
 function downloadBook(fileName) {
-    try {
-        // 创建一个隐藏的a标签触发下载
-        const link = document.createElement('a');
-        link.href = `novels/小说/${fileName}`;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        console.log('下载成功:', fileName);
-    } catch (error) {
-        console.error('下载失败:', error);
-        alert('下载失败，请检查文件是否存在');
-    }
+    const link = document.createElement('a');
+    link.href = `novels/小说/${fileName}`;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
