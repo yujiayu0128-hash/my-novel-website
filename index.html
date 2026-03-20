@@ -3,28 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小说</title>
+    <title>我的私人图书馆</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <!-- 头部 -->
         <header>
-            <h1>小说</h1>
+            <h1>📚 我的私人图书馆</h1>
             <p>共 <span id="bookCount">0</span> 本小说</p>
         </header>
-
+        
         <!-- 搜索框 -->
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="搜索小说名字..." onkeyup="searchBooks()">
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="搜索小说名字..." 
+                onkeyup="searchBooks()"
+            >
+            <span class="search-icon">🔍</span>
         </div>
-
+        
+        <!-- 排序选项 -->
+        <!-- 排序功能已移除，默认A-Z排序 -->
+        
         <!-- 小说列表 -->
         <div class="book-list" id="bookList">
-            <div class="loading">加载中...</div>
+            <!-- 这里会用 JavaScript 动态生成 -->
+            <div class="loading">加载小说中...</div>
         </div>
     </div>
-
+    
+    <!-- 引入 JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* 极简黑白风 - 小说馆 */
+/* 极简黑白风 - 私人图书馆 */
 * {
     margin: 0;
     padding: 0;
@@ -26,13 +26,13 @@ header {
 h1 {
     font-size: 3rem;
     font-weight: 400;
-    color: #000000;
+    color: #4f4f4f;
     margin-bottom: 8px;
     letter-spacing: 2px;
 }
 
 header p {
-    color: #666666;
+    color: #656565;
     font-size: 1rem;
 }
 
@@ -47,10 +47,10 @@ header p {
     max-width: 400px;
     padding: 12px 20px;
     font-size: 1rem;
-    border: 1px solid #dddddd;
+    border: 1px solid #000000;
     border-radius: 30px;
     outline: none;
-    background: #ffffff;
+    background: #ffffffff;
     color: #000000;
     text-align: center;
 }
@@ -60,7 +60,7 @@ header p {
 }
 
 #searchInput::placeholder {
-    color: #bbbbbb;
+    color: #ffffff;
     text-align: center;
 }
 
@@ -76,7 +76,7 @@ header p {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #000000;
 }
 
 .book-info {
@@ -84,11 +84,6 @@ header p {
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-.book-icon {
-    font-size: 1.2rem;
-    color: #999999;
 }
 
 .book-name {
@@ -110,7 +105,7 @@ header p {
 
 .action-btn {
     padding: 6px 16px;
-    border: 1px solid #dddddd;
+    border: 1px solid #606060;
     border-radius: 20px;
     font-size: 0.9rem;
     cursor: pointer;
@@ -124,11 +119,19 @@ header p {
     border-color: #999999;
 }
 
+.read-btn {
+    background: #ffffff;
+}
+
+.download-btn {
+    background: #ffffff;
+}
+
 /* 加载和空状态 */
 .loading, .no-results {
     text-align: center;
     padding: 60px 20px;
-    color: #999999;
+    color: #000000;
     font-size: 1rem;
 }
 
