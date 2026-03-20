@@ -196,22 +196,140 @@
     }
     
     @media (max-width: 768px) {
-        .chapter-panel {
-            flex-direction: column;
-            height: auto;
-        }
-        .chapter-list {
-            width: 100%;
-            max-height: 200px;
-        }
-        .history-popup {
-            width: 250px;
-        }
+    .chapter-panel {
+        flex-direction: row;  /* 改成左右排列，不换行 */
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        padding: 0;
+        background: #fefcf5;
+        z-index: 10;
     }
+    
+    .chapter-list {
+        width: 200px;
+        height: 100vh;
+        max-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 20;
+        border-radius: 0;
+        background: #f8f5ff;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        transform: translateX(-100%);  /* 默认隐藏 */
+        transition: transform 0.3s ease;
+    }
+    
+    .chapter-list.show {
+        transform: translateX(0);  /* 显示目录 */
+    }
+    
+    /* 添加目录开关按钮 */
+    .menu-toggle {
+        position: fixed;
+        left: 10px;
+        top: 10px;
+        width: 40px;
+        height: 40px;
+        background: #9b7bff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        z-index: 30;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    
+    .reader-content {
+        margin-left: 0;
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        padding-bottom: 60px;  /* 给底部按钮留空间 */
+    }
+    
+    .reader-header {
+        padding: 15px;
+        margin: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #fefcf5;
+        z-index: 15;
+        border-bottom: 2px solid #f0eaff;
+    }
+    
+    .reader-header .back-btn {
+        margin-left: 50px;  /* 给菜单按钮让位 */
+    }
+    
+    .reader-title {
+        font-size: 1.2rem;
+    }
+    
+    .reader-container {
+        padding: 0;
+        margin: 0;
+        max-width: 100%;
+        border-radius: 0;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    /* 底部导航按钮 */
+    .chapter-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: white;
+        border-top: 1px solid #f0eaff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        z-index: 15;
+    }
+    
+    .nav-btn {
+        padding: 8px 20px;
+        background: #f0eaff;
+        border: none;
+        border-radius: 20px;
+        color: #4a4458;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+    
+    .nav-btn:hover {
+        background: #e5d9ff;
+    }
+    
+    .nav-btn.disabled {
+        opacity: 0.3;
+        pointer-events: none;
+    }
+}
 </style>
 </head>
 <body>
     <div class="reader-container">
+        <!-- 手机版目录开关 -->
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
         <!-- 右侧历史图标 -->
         <div class="history-icon" id="historyIcon" onclick="toggleHistory()">⏳</div>
     
@@ -229,6 +347,12 @@
         </div>
         
         <div class="chapter-panel">
+            <!-- 底部章节导航 -->
+            <div class="chapter-nav">
+                <button class="nav-btn" onclick="prevChapter()" id="prevBtn">← 上一章</button>
+                <span id="chapterInfo"></span>
+                <button class="nav-btn" onclick="nextChapter()" id="nextBtn">下一章 →</button>
+            </div>
             <!-- 左侧章节列表 -->
             <div class="chapter-list" id="chapterList">
                 <h3>章节列表</h3>
@@ -347,7 +471,7 @@
                 readingHistory.unshift(record);
             }
             
-            if (readingHistory.length > 10) {
+            if (readingHistory.length > 100) {
                 readingHistory = readingHistory.slice(0, 10);
             }
             
@@ -595,6 +719,14 @@ function showChapter(index) {
 
     displayContent(chapterContent);
     saveReadingPosition();
+
+    // 更新导航按钮
+updateNavButtons();
+
+    // 手机版自动隐藏目录
+    if (window.innerWidth <= 768) {
+        document.querySelector('.chapter-list').classList.remove('show');
+    }
 }
         
         // 显示内容（格式化）
@@ -621,6 +753,57 @@ function showChapter(index) {
         function goBack() {
             window.location.href = 'index.html';
         }
+
+        // 切换目录显示
+function toggleMenu() {
+    document.querySelector('.chapter-list').classList.toggle('show');
+}
+
+// 上一章
+function prevChapter() {
+    const currentIndex = chapters.findIndex(c => c.title === currentChapter);
+    if (currentIndex > 0) {
+        showChapter(currentIndex - 1);
+        updateNavButtons();
+    }
+}
+
+// 下一章
+function nextChapter() {
+    const currentIndex = chapters.findIndex(c => c.title === currentChapter);
+    if (currentIndex < chapters.length - 1) {
+        showChapter(currentIndex + 1);
+        updateNavButtons();
+    }
+}
+
+// 更新导航按钮状态
+function updateNavButtons() {
+    const currentIndex = chapters.findIndex(c => c.title === currentChapter);
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const chapterInfo = document.getElementById('chapterInfo');
+    
+    if (prevBtn) {
+        if (currentIndex <= 0) {
+            prevBtn.classList.add('disabled');
+        } else {
+            prevBtn.classList.remove('disabled');
+        }
+    }
+    
+    if (nextBtn) {
+        if (currentIndex >= chapters.length - 1) {
+            nextBtn.classList.add('disabled');
+        } else {
+            nextBtn.classList.remove('disabled');
+        }
+    }
+    
+    if (chapterInfo) {
+        chapterInfo.textContent = `${currentIndex + 1}/${chapters.length}`;
+    }
+}
     </script>
 </body>
 </html>
